@@ -167,3 +167,66 @@ updateTable();
 </script>
 </body>
 </html>
+import re, json
+from pathlib import Path
+from openpyxl import load_workbook
+
+excel_path = Path("Nutrient analysis template3333.xlsx")
+html_path  = Path("nutriwise.html")
+
+wb = load_workbook(excel_path, data_only=False)
+
+def excel_to_js(expr):
+    """Convert Excel formula syntax to JS syntax (rough 1:1)."""
+    expr = expr.lstrip("=")
+    expr = re.sub(r"([A-Za-z]+)([0-9]+)", r"\1\2", expr)   # keep coords literal
+    expr = expr.replace("^", "**")
+    expr = expr.replace(";", ",")
+    expr = expr.replace(",", "+") if "SUM" in expr else expr
+    expr = re.sub(r"SUM\(([^)]+)\)", r"(\1)", expr)
+    return expr
+
+all_js_lines = []
+
+for ws in wb.worksheets:
+    for row in ws.iter_rows():
+        for cell in row:
+            if isinstance(cell.value, str) and cell.value.startswith("="):
+                js_expr = excel_to_js(cell.value)
+                line = f"let {cell.coordinate} = {js_expr};"
+                all_js_lines.append(line)
+
+# --- Build minimal NutriWise HTML skeleton ---
+html_head = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NutriWise Calculator</title>
+<style>
+body{font-family:Segoe UI,Arial;background:#f8faf8;color:#222;margin:0}
+header{background:#2e8b57;color:#fff;text-align:center;padding:1rem}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border:1px solid #ddd;padding:4px 6px;text-align:right}
+th{background:#e9f5ec;color:#256f45}
+</style>
+</head><body>
+<header><h1>NutriWise Nutrient Calculator</h1></header>
+<main><p>Auto-generated from Excel formulas</p>
+<script>
+"""
+html_tail = """
+</script>
+</main>
+<footer style="text-align:center;padding:1rem;border-top:1px solid #ddd">
+© 2025 NutriWise – Eat Smart, Live Healthy
+</footer>
+</body></html>
+"""
+
+with open(html_path, "w", encoding="utf-8") as f:
+    f.write(html_head)
+    for line in all_js_lines:
+        f.write(line + "\n")
+    f.write(html_tail)
+
+print(f"✅ Done! Created {html_path} with {len(all_js_lines)} formulas.")

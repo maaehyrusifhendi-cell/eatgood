@@ -123,110 +123,186 @@
     </div>
   </div>
 </section>
-<!-- Meal Intake Calculator Section -->
-<section id="meal-calculator">
-  <h3 style="text-align:center;font-size:2em;color:#2e7d32;">Meal Intake Calculator (74 Nutrients)</h3>
+<script>
+/* -------------------- BASIC HEALTH CALCULATORS -------------------- */
+function calculateBMI() {
+  const h = parseFloat(document.getElementById("bmiHeight").value) / 100;
+  const w = parseFloat(document.getElementById("bmiWeight").value);
+  if (h > 0 && w > 0) {
+    const bmi = w / (h * h);
+    let status =
+      bmi < 18.5
+        ? "Underweight"
+        : bmi < 24.9
+        ? "Normal"
+        : bmi < 29.9
+        ? "Overweight"
+        : "Obese";
+    document.getElementById("bmiResult").innerText =
+      `BMI: ${bmi.toFixed(1)} (${status})`;
+  }
+}
 
-  <div class="controls" style="text-align:center;margin-top:15px;">
-    <label for="foodSelect">Food Item: </label>
-    <select id="foodSelect" style="padding:5px;border-radius:4px;">
-      <option value="">--Select Food--</option>
-      <option>Hausa Koko</option>
-      <option>Rice Porridge</option>
-      <option>Corn Porridge</option>
-      <option>Oblayo</option>
-      <!-- Add other foods -->
-    </select>
+function calculateCalories() {
+  const a = parseInt(document.getElementById("calAge").value);
+  const g = document.getElementById("calGender").value;
+  const w = parseFloat(document.getElementById("calWeight").value);
+  const h = parseFloat(document.getElementById("calHeight").value);
+  const act = parseFloat(document.getElementById("calActivity").value);
+  if (a && w && h) {
+    // Revised Harris–Benedict (1984)
+    let bmr =
+      g === "male"
+        ? 88.362 + 13.397 * w + 4.799 * h - 5.677 * a
+        : 447.593 + 9.247 * w + 3.098 * h - 4.33 * a;
+    const cal = bmr * act;
+    document.getElementById("calResult").innerHTML =
+      `Estimated Daily Calories: <strong>${Math.round(
+        cal
+      )} kcal</strong><br><small>Harris–Benedict (1984)</small>`;
+  }
+}
 
-    <label for="portion">Portion (g): </label>
-    <input type="number" id="portion" value="100" min="1" style="width:80px;text-align:right;">
-    <button onclick="addFood()" style="background:#2e7d32;color:white;border:none;padding:8px 12px;border-radius:5px;">Add Food</button>
-    <button onclick="resetTable()" style="background:#a5d6a7;color:#1b5e20;border:none;padding:8px 12px;border-radius:5px;">Reset</button>
-  </div>
+function checkBP() {
+  const s = parseInt(document.getElementById("sys").value);
+  const d = parseInt(document.getElementById("dia").value);
+  let r = "";
+  if (s < 120 && d < 80) r = "Normal";
+  else if (s < 130 && d < 80) r = "Elevated";
+  else if (s < 140 || d < 90) r = "High (Stage 1)";
+  else r = "High (Stage 2)";
+  document.getElementById("bpResult").innerText = r;
+}
 
-  <div style="overflow-x:auto;margin-top:20px;">
-    <table id="nutrientTable" style="width:100%;border-collapse:collapse;font-size:13px;">
-      <thead>
-        <tr style="background:#2e7d32;color:white;">
-          <th>Food Item</th><th>Portion (g)</th>
-          <th>Water (g)</th><th>Energy (kcal)</th><th>Protein (g)</th>
-          <th>Fat (g)</th><th>Carbohydrate (g)</th><th>Fibre (g)</th><th>Ash (g)</th>
-          <th>Calcium (mg)</th><th>Iron (mg)</th><th>Zinc (mg)</th>
-          <th>Vitamin A (µg)</th><th>Thiamine (mg)</th><th>Riboflavin (mg)</th>
-          <th>Niacin (mg)</th><th>Vitamin C (mg)</th><th>Theobromine (mg)</th>
-          <th>Protein (% Energy)</th><th>Fat (% Energy)</th><th>Carbohydrate (% Energy)</th>
-          <th>% Animal Protein</th><th>% Cereal Protein</th><th>% Legume Prot.</th>
-          <th>Other Plant Prot.</th><th>FVS</th><th>DDS</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-      <tfoot>
-        <tr id="totalsRow" style="background:#e8f5e9;font-weight:bold;"><td colspan="2">Total</td></tr>
-      </tfoot>
-    </table>
-  </div>
-</section>
+function checkSugar() {
+  const s = parseFloat(document.getElementById("sugar").value);
+  let r = "";
+  if (s < 4.0) r = "Low (Hypoglycemia)";
+  else if (s <= 5.5) r = "Normal";
+  else if (s <= 6.9) r = "Prediabetes";
+  else r = "Diabetes";
+  document.getElementById("sugarResult").innerText = r;
+}
 
-<!-- Research Section -->
-<section class="research" id="research" style="background:#f1f8e9;">
-  <h3 style="text-align:center;font-size:2em;color:#2e7d32;">Latest Nutritional Research</h3>
-  <div class="tip-cards">
-    <div class="card">
-      <h4>Global Research</h4>
-      <p><strong>Study:</strong> “Global Dietary Patterns and Health Impacts (2024)”</p>
-      <p>Balanced diets reduce global mortality by 15 %.</p>
-      <a href="https://www.who.int/news-room/fact-sheets/detail/healthy-diet" target="_blank">Read More</a>
-    </div>
-    <div class="card">
-      <h4>Africa</h4>
-      <p><strong>Study:</strong> “Nutrition Challenges and Opportunities in Sub-Saharan Africa (2023)”</p>
-      <p>Addresses malnutrition and obesity through education and agriculture.</p>
-      <a href="https://www.afro.who.int/publications" target="_blank">Read More</a>
-    </div>
-    <div class="card">
-      <h4>Ghana</h4>
-      <p><strong>Study:</strong> “Dietary Transitions and Nutritional Health in Ghana (2024)”</p>
-      <p>Local plant-based diets improve community health outcomes.</p>
-      <a href="https://www.ghanaiantimes.com.gh/category/health/" target="_blank">Read More</a>
-    </div>
-  </div>
-</section>
+/* -------------------- PAYMENT SIMULATION -------------------- */
+function simulatePayment() {
+  document.getElementById("paymentStatus").innerText =
+    "✅ Payment simulated successfully. You can now chat with your dietician.";
+}
 
-<!-- Payment Section -->
-<section class="payment-section" id="payment" style="background:#f9fbe7;">
-  <h3 style="text-align:center;font-size:2em;color:#2e7d32;">Secure Payment Before Consultation</h3>
-  <div class="tip-cards">
-    <div class="card">
-      <label>Full Name:</label><input type="text" id="payName" required>
-      <label>Email:</label><input type="email" id="payEmail" required>
-      <label>Consultation Type:</label>
-      <select id="payType">
-        <option value="diet">Diet Consultation – $50</option>
-        <option value="followup">Follow-up Session – $30</option>
-      </select>
-      <label>Payment Method:</label>
-      <select id="payMethod">
-        <option>Credit Card</option><option>PayPal</option><option>Mobile Money</option>
-      </select>
-      <button onclick="simulatePayment()">Proceed to Payment</button>
-      <p id="paymentStatus"></p>
-    </div>
-  </div>
-</section>
+/* -------------------- CHAT SIMULATION -------------------- */
+function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const msg = input.value.trim();
+  if (!msg) return;
+  const chat = document.getElementById("chatMessages");
 
-<!-- Chat Section -->
-<section class="chat-section" id="chat" style="background:#f9fbe7;">
-  <h3 style="text-align:center;font-size:2em;color:#2e7d32;">Live Chat – Client & Dietician</h3>
-  <div class="chat-box" style="max-width:600px;margin:0 auto;border:1px solid #ccc;border-radius:10px;background:#fff;overflow:hidden;display:flex;flex-direction:column;height:400px;">
-    <div class="chat-messages" id="chatMessages" style="flex-grow:1;padding:15px;overflow-y:auto;background:#f4f7f8;"></div>
-    <div class="chat-input" style="display:flex;border-top:1px solid #ccc;">
-      <input type="text" id="chatInput" placeholder="Type a message…" style="flex-grow:1;border:none;padding:10px;font-size:1em;" onkeydown="if(event.key==='Enter'){sendMessage()}">
-      <button onclick="sendMessage()" style="background:#2e7d32;color:white;border:none;padding:10px 20px;cursor:pointer;">Send</button>
-    </div>
-  </div>
-</section>
+  const client = document.createElement("div");
+  client.classList.add("chat-message", "client");
+  client.style.background = "#c8e6c9";
+  client.style.alignSelf = "flex-end";
+  client.style.padding = "8px 12px";
+  client.style.borderRadius = "8px";
+  client.style.marginBottom = "10px";
+  client.textContent = msg;
+  chat.appendChild(client);
+  input.value = "";
 
-<footer style="background:#1b5e20;color:white;text-align:center;padding:20px;">
-  <p>&copy; 2025 NutriWise. All rights reserved.</p>
-  <p><a href="#" style="color:#c8e6c9;text-decoration:none;">Privacy Policy</a> | <a href="#" style="color:#c8e6c9;text-decoration:none;">Terms of Service</a> | <a href="mailto:info@nutriwise.com" style="color:#c8e6c9;text-decoration:none;">Contact Us</a></p>
-</footer>
+  setTimeout(() => {
+    const diet = document.createElement("div");
+    diet.classList.add("chat-message", "dietician");
+    diet.style.background = "#a5d6a7";
+    diet.style.alignSelf = "flex-start";
+    diet.style.padding = "8px 12px";
+    diet.style.borderRadius = "8px";
+    diet.style.marginBottom = "10px";
+    diet.textContent =
+      "Thank you for your message! Let's discuss your nutrition goals.";
+    chat.appendChild(diet);
+    chat.scrollTop = chat.scrollHeight;
+  }, 1000);
+
+  chat.scrollTop = chat.scrollHeight;
+}
+
+/* -------------------- MEAL INTAKE CALCULATOR -------------------- */
+// Sample nutrient database (per 100 g)
+const nutrientData = {
+  "Hausa Koko": {
+    "Water (g)": 70, "Energy (kcal)": 120, "Protein (g)": 2.5, "Fat (g)": 1.5,
+    "Carbohydrate (g)": 25, "Fibre (g)": 1.8, "Ash (g)": 0.5,
+    "Calcium (mg)": 22, "Iron (mg)": 1.3, "Zinc (mg)": 0.6,
+    "Vitamin A (µg)": 5, "Thiamine (mg)": 0.03, "Riboflavin (mg)": 0.02,
+    "Niacin (mg)": 0.4, "Vitamin C (mg)": 0, "Theobromine (mg)": 0,
+    "Protein (% Energy)": 8, "Fat (% Energy)": 12,
+    "Carbohydrate (% Energy)": 80, "% Animal Protein": 0,
+    "% Cereal Protein": 90, "% Legume Prot.": 0,
+    "Other Plant Prot.": 10, "FVS": 1, "DDS": 2,
+  },
+  "Rice Porridge": {
+    "Water (g)": 65, "Energy (kcal)": 150, "Protein (g)": 3, "Fat (g)": 1,
+    "Carbohydrate (g)": 30, "Fibre (g)": 1.2, "Ash (g)": 0.4,
+    "Calcium (mg)": 15, "Iron (mg)": 0.8, "Zinc (mg)": 0.5,
+    "Vitamin A (µg)": 0, "Thiamine (mg)": 0.04, "Riboflavin (mg)": 0.03,
+    "Niacin (mg)": 0.7, "Vitamin C (mg)": 0, "Theobromine (mg)": 0,
+    "Protein (% Energy)": 8, "Fat (% Energy)": 10,
+    "Carbohydrate (% Energy)": 82, "% Animal Protein": 0,
+    "% Cereal Protein": 100, "% Legume Prot.": 0,
+    "Other Plant Prot.": 0, "FVS": 1, "DDS": 1,
+  },
+};
+
+const tableBody = document.querySelector("#nutrientTable tbody");
+const totalsRow = document.getElementById("totalsRow");
+
+function addFood() {
+  const food = document.getElementById("foodSelect").value;
+  const portion = parseFloat(document.getElementById("portion").value);
+  if (!food || !portion || !nutrientData[food]) {
+    alert("Please select a valid food and portion size.");
+    return;
+  }
+
+  const nutrients = nutrientData[food];
+  const tr = document.createElement("tr");
+  tr.innerHTML =
+    `<td>${food}</td><td>${portion}</td>` +
+    Object.keys(nutrients)
+      .map(
+        (key) =>
+          `<td>${((nutrients[key] * portion) / 100).toFixed(2)}</td>`
+      )
+      .join("");
+  tableBody.appendChild(tr);
+  updateTotals();
+}
+
+function updateTotals() {
+  const rows = tableBody.querySelectorAll("tr");
+  if (rows.length === 0) {
+    totalsRow.innerHTML = "<td colspan='2'>Total</td>";
+    return;
+  }
+
+  const nutrientKeys = Object.keys(Object.values(nutrientData)[0]);
+  const totals = Array(nutrientKeys.length).fill(0);
+
+  rows.forEach((row) => {
+    const tds = row.querySelectorAll("td");
+    for (let i = 2; i < tds.length; i++) {
+      totals[i - 2] += parseFloat(tds[i].textContent) || 0;
+    }
+  });
+
+  totalsRow.innerHTML =
+    "<td colspan='2'>Total</td>" +
+    totals.map((val) => `<td>${val.toFixed(2)}</td>`).join("");
+}
+
+function resetTable() {
+  tableBody.innerHTML = "";
+  updateTotals();
+}
+</script>
+</body>
+</html>

@@ -1,133 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NutriWise Nutrient Calculator (Demo)</title>
-<style>
-  body {font-family: "Segoe UI", Arial, sans-serif; background:#f8faf8; color:#222; margin:0;}
-  header {background:#2e8b57; color:#fff; text-align:center; padding:1rem;}
-  main {padding:1rem 2%;}
-  .input-box {display:flex; flex-wrap:wrap; gap:1rem; align-items:center; margin-bottom:1rem;}
-  select, input {padding:.6rem; border:1px solid #ccc; border-radius:.4rem; font-size:1rem;}
-  table {border-collapse:collapse; width:100%; overflow-x:auto; display:block;}
-  th, td {border:1px solid #e0e0e0; padding:.4rem .6rem; text-align:right; white-space:nowrap;}
-  th {background:#e9f5ec; color:#256f45; position:sticky; top:0;}
-  td:first-child, th:first-child {text-align:left;}
-  tr:nth-child(even){background:#fdfdfd;}
-  footer{text-align:center;font-size:.9rem;color:#555;padding:1rem 0;margin-top:2rem;border-top:1px solid #ddd;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NutriWise - Professional Nutrition Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f7f8;
+      color: #333;
+    }
+    header {
+      background-color: #2e7d32;
+      color: #fff;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    header h1 { margin: 0; font-size: 1.8em; }
+    nav a {
+      color: #fff; margin-left: 20px; text-decoration: none; font-weight: 500;
+    }
+    .hero {
+      background: url('https://images.unsplash.com/photo-1546069901-eacef0df6022') center/cover no-repeat;
+      color: white; text-align: center; padding: 100px 20px;
+    }
+    .hero h2 { font-size: 2.5em; margin-bottom: 10px; }
+    .hero p { font-size: 1.2em; }
+
+    section { padding: 60px 40px; background-color: #fff; }
+    .tip-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+    .card {
+      background-color: #e8f5e9;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .card h4 { margin-top: 0; color: #2e7d32; }
+    .card input, .card select, .card textarea {
+      width: 100%; padding: 8px; margin: 6px 0;
+      border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+    }
+    .card button {
+      background-color: #2e7d32; color: white;
+      border: none; padding: 10px; width: 100%;
+      cursor: pointer; border-radius: 5px;
+    }
+    .card button:hover { background-color: #1b5e20; }
+
+    .research { background-color: #f1f8e9; }
+    .research a { color: #2e7d32; text-decoration: none; font-weight: bold; }
+    .research a:hover { text-decoration: underline; }
+
+    .payment-section, .chat-section { background-color: #f9fbe7; }
+
+    /* Chat box styling */
+    .chat-box {
+      max-width: 600px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+    }
+    .chat-messages {
+      flex-grow: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background: #f4f7f8;
+    }
+    .chat-message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      max-width: 80%;
+    }
+    .client { background: #c8e6c9; align-self: flex-end; }
+    .dietician { background: #a5d6a7; align-self: flex-start; }
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+    .chat-input input {
+      flex-grow: 1;
+      border: none;
+      padding: 10px;
+      font-size: 1em;
+    }
+    .chat-input button {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    .chat-input button:hover { background: #1b5e20; }
+
+    footer {
+      background-color: #1b5e20; color: white;
+      text-align: center; padding: 20px;
+    }
+    footer a { color: #c8e6c9; text-decoration: none; margin: 0 10px; }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; text-align: center; }
+      nav { margin-top: 10px; }
+    }
+  </style>
 </head>
 <body>
+
 <header>
-  <h1>NutriWise Nutrient Calculator (Demo)</h1>
-  <p>Per 1 g basis • WHO/FAO RDA • 5 Foods</p>
+  <h1>NutriWise</h1>
+  <nav>
+    <a href="#tips">Tips</a>
+    <a href="#calculators">Calculators</a>
+    <a href="#research">Research</a>
+    <a href="#payment">Payment</a>
+    <a href="#chat">Chat</a>
+  </nav>
 </header>
 
-<main>
-  <div class="input-box">
-    <label for="foodSelect"><strong>Select Food:</strong></label>
-    <select id="foodSelect"></select>
+<section class="hero">
+  <h2>Eat Smart, Live Well</h2>
+  <p>Expert-backed nutrition tips and tools to boost your health and vitality.</p>
+</section>
 
-    <label for="grams"><strong>Quantity (g):</strong></label>
-    <input id="grams" type="number" min="0" step="0.1" placeholder="e.g. 100" />
+<!-- Tips Section -->
+<section id="tips">
+  <h3>Top Nutrition Tips</h3>
+  <div class="tip-cards">
+    <div class="card"><h4>1. Eat Whole Foods</h4><p>Focus on unprocessed, nutrient-dense foods like fruits, vegetables, and whole grains.</p></div>
+    <div class="card"><h4>2. Stay Hydrated</h4><p>Drink at least 8 glasses of water a day to support metabolism and digestion.</p></div>
+    <div class="card"><h4>3. Balance Your Plate</h4><p>Include healthy fats, lean proteins, and complex carbs in every meal.</p></div>
+    <div class="card"><h4>4. Limit Added Sugars</h4><p>Check nutrition labels and avoid processed snacks and sugary drinks.</p></div>
   </div>
+</section>
 
-  <table id="nutrientTable">
-    <thead>
-      <tr>
-        <th>Nutrient</th>
-        <th>Intake (g / kcal / mg)</th>
-        <th>% RDA</th>
-      </tr>
-    </thead>
-    <tbody id="nutrientBody"></tbody>
-  </table>
-</main>
+<!-- Calculators Section -->
+<section id="calculators">
+  <h3>Health Calculators</h3>
+  <div class="tip-cards">
+    <div class="card">
+      <h4>BMI Calculator</h4>
+      <label>Height (cm):</label><input type="number" id="bmiHeight">
+      <label>Weight (kg):</label><input type="number" id="bmiWeight">
+      <button onclick="calculateBMI()">Calculate BMI</button>
+      <p id="bmiResult"></p>
+    </div>
 
-<footer>© 2025 NutriWise – Eat Smart, Live Healthy</footer>
+    <div class="card">
+      <h4>Calories Calculator</h4>
+      <p style="font-size:0.9em;color:#2e7d32;"><strong>Formula:</strong> Revised Harris–Benedict Equation (1984)</p>
+      <label>Age:</label><input type="number" id="calAge">
+      <label>Gender:</label>
+      <select id="calGender"><option value="male">Male</option><option value="female">Female</option></select>
+      <label>Weight (kg):</label><input type="number" id="calWeight">
+      <label>Height (cm):</label><input type="number" id="calHeight">
+      <label>Activity:</label>
+      <select id="calActivity">
+        <option value="1.2">Sedentary</option><option value="1.375">Light</option>
+        <option value="1.55">Moderate</option><option value="1.725">Active</option><option value="1.9">Very Active</option>
+      </select>
+      <button onclick="calculateCalories()">Estimate Calories</button>
+      <p id="calResult"></p>
+    </div>
+
+    <div class="card">
+      <h4>Blood Pressure Checker</h4>
+      <label>Systolic:</label><input type="number" id="sys">
+      <label>Diastolic:</label><input type="number" id="dia">
+      <button onclick="checkBP()">Check</button><p id="bpResult"></p>
+    </div>
+
+    <div class="card">
+      <h4>Blood Sugar Checker</h4>
+      <p style="font-size:0.9em;color:#2e7d32;">Units: mmol/L (fasting)</p>
+      <label>Fasting Glucose (mmol/L):</label><input type="number" id="sugar">
+      <button onclick="checkSugar()">Evaluate</button><p id="sugarResult"></p>
+    </div>
+  </div>
+</section>
+
+<!-- Research Section -->
+<section class="research" id="research">
+  <h3>Latest Nutritional Research</h3>
+  <div class="tip-cards">
+    <div class="card">
+      <h4>Global Research</h4>
+      <p><strong>Study:</strong> "Global Dietary Patterns and Health Impacts (2024)"</p>
+      <p>Balanced diets reduce global mortality by 15%.</p>
+      <a href="https://www.who.int/news-room/fact-sheets/detail/healthy-diet" target="_blank">Read More</a>
+    </div>
+    <div class="card">
+      <h4>Africa</h4>
+      <p><strong>Study:</strong> "Nutrition Challenges and Opportunities in Sub-Saharan Africa (2023)"</p>
+      <p>Addresses malnutrition and obesity through education and agriculture.</p>
+      <a href="https://www.afro.who.int/publications" target="_blank">Read More</a>
+    </div>
+    <div class="card">
+      <h4>Ghana</h4>
+      <p><strong>Study:</strong> "Dietary Transitions and Nutritional Health in Ghana (2024)"</p>
+      <p>Local plant-based diets improve community health outcomes.</p>
+      <a href="https://www.ghanaiantimes.com.gh/category/health/" target="_blank">Read More</a>
+    </div>
+  </div>
+</section>
+
+<!-- Payment Section -->
+<section class="payment-section" id="payment">
+  <h3>Secure Payment Before Consultation</h3>
+  <div class="tip-cards">
+    <div class="card">
+      <label>Full Name:</label><input type="text" id="payName" required>
+      <label>Email:</label><input type="email" id="payEmail" required>
+      <label>Consultation Type:</label>
+      <select id="payType">
+        <option value="diet">Diet Consultation - $50</option>
+        <option value="followup">Follow-up Session - $30</option>
+      </select>
+      <label>Payment Method:</label>
+      <select id="payMethod">
+        <option>Credit Card</option><option>PayPal</option><option>Mobile Money</option>
+      </select>
+      <button onclick="simulatePayment()">Proceed to Payment</button>
+      <p id="paymentStatus"></p>
+    </div>
+  </div>
+</section>
+
+<!-- Chat Section -->
+<section class="chat-section" id="chat">
+  <h3>Live Chat: Client & Dietician</h3>
+  <div class="chat-box">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter'){sendMessage()}">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2025 NutriWise. All rights reserved.</p>
+  <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="mailto:info@nutriwise.com">Contact Us</a></p>
+</footer>
 
 <script>
-// ===== Sample nutrient data per 1 g of food (rounded to 2 dp) =====
-const foodData = {
-  "Hausa koko": {
-    "Water (g)":0.14,"kcal":1.22,"Protein (g)":0.02,"Total fat (g)":0.01,"Carbohydrates (g)":0.25,
-    "Iron (mg)":0.01,"Calcium (mg)":0.08
-  },
-  "Rice porridge": {
-    "Water (g)":0.72,"kcal":0.98,"Protein (g)":0.03,"Total fat (g)":0.01,"Carbohydrates (g)":0.22,
-    "Iron (mg)":0.02,"Calcium (mg)":0.05
-  },
-  "Corn porridge": {
-    "Water (g)":0.60,"kcal":1.05,"Protein (g)":0.03,"Total fat (g)":0.01,"Carbohydrates (g)":0.23,
-    "Iron (mg)":0.02,"Calcium (mg)":0.06
-  },
-  "Oblayo": {
-    "Water (g)":0.30,"kcal":1.10,"Protein (g)":0.03,"Total fat (g)":0.01,"Carbohydrates (g)":0.24,
-    "Iron (mg)":0.02,"Calcium (mg)":0.07
-  },
-  "Weetabix": {
-    "Water (g)":0.08,"kcal":3.60,"Protein (g)":0.12,"Total fat (g)":0.02,"Carbohydrates (g)":0.74,
-    "Iron (mg)":0.08,"Calcium (mg)":0.06
+  function calculateBMI() {
+    const h = parseFloat(document.getElementById("bmiHeight").value)/100;
+    const w = parseFloat(document.getElementById("bmiWeight").value);
+    if(h>0 && w>0){
+      const bmi=w/(h*h);
+      let s=bmi<18.5?"Underweight":bmi<24.9?"Normal":bmi<29.9?"Overweight":"Obese";
+      document.getElementById("bmiResult").innerText=`BMI: ${bmi.toFixed(1)} (${s})`;
+    }
   }
-};
-
-// ===== WHO/FAO adult RDA values =====
-const RDA = {
-  "Water (g)":2700,"kcal":2000,"Protein (g)":50,"Total fat (g)":70,"Carbohydrates (g)":310,
-  "Iron (mg)":18,"Calcium (mg)":1000
-};
-
-// ===== Formula functions mirroring Excel logic =====
-function energyContrib(p,f,c){
-  const energy = (p*4 + f*9 + c*4);
-  const pctProtein = (p*4/energy)*100;
-  const pctFat = (f*9/energy)*100;
-  const pctCarb = (c*4/energy)*100;
-  return {energy,pctProtein,pctFat,pctCarb};
-}
-
-// ===== Interface population =====
-const foodSelect = document.getElementById("foodSelect");
-const gramsInput = document.getElementById("grams");
-const body = document.getElementById("nutrientBody");
-
-Object.keys(foodData).forEach(f=>{
-  const opt=document.createElement("option");
-  opt.value=f; opt.textContent=f;
-  foodSelect.appendChild(opt);
-});
-
-function updateTable(){
-  const food=foodSelect.value;
-  const grams=parseFloat(gramsInput.value)||0;
-  const data=foodData[food];
-  body.innerHTML="";
-
-  // compute energy contributions
-  const ecalc=energyContrib(data["Protein (g)"],data["Total fat (g)"],data["Carbohydrates (g)"]);
-  data["kcal (from macro)"]=ecalc.energy;
-  data["Protein % Energy"]=ecalc.pctProtein;
-  data["Fat % Energy"]=ecalc.pctFat;
-  data["Carb % Energy"]=ecalc.pctCarb;
-
-  for(let n in data){
-    const valPerG=data[n];
-    const intake=valPerG*grams;
-    const rda=RDA[n]||0;
-    const pct=rda?(intake/rda)*100:0;
-    const row=document.createElement("tr");
-    row.innerHTML=`
-      <td>${n}</td>
-      <td>${intake.toFixed(2)}</td>
-      <td>${pct.toFixed(2)}%</td>`;
-    body.appendChild(row);
+  function calculateCalories(){
+    const a=parseInt(document.getElementById("calAge").value),
+          g=document.getElementById("calGender").value,
+          w=parseFloat(document.getElementById("calWeight").value),
+          h=parseFloat(document.getElementById("calHeight").value),
+          act=parseFloat(document.getElementById("calActivity").value);
+    if(a&&w&&h){
+      let bmr=g==='male'?(88.362+(13.397*w)+(4.799*h)-(5.677*a)):(447.593+(9.247*w)+(3.098*h)-(4.33*a));
+      const cal=bmr*act;
+      document.getElementById("calResult").innerHTML=`Estimated Daily Calories: <strong>${Math.round(cal)} kcal</strong><br><small>Harris–Benedict Equation (1984)</small>`;
+    }
   }
-}
-foodSelect.addEventListener("change",updateTable);
-gramsInput.addEventListener("input",updateTable);
-foodSelect.selectedIndex=0;
-updateTable();
+  function checkBP(){
+    const s=parseInt(document.getElementById("sys").value),
+          d=parseInt(document.getElementById("dia").value);
+    let r="";
+    if(s<120 && d<80)r="Normal";
+    else if(s<130 && d<80)r="Elevated";
+    else if(s<140 || d<90)r="High (Stage 1)";
+    else r="High (Stage 2)";
+    document.getElementById("bpResult").innerText=r;
+  }
+  function checkSugar(){
+    const s=parseFloat(document.getElementById("sugar").value);
+    let r="";
+    if(s<4.0)r="Low (Hypoglycemia)";
+    else if(s<=5.5)r="Normal";
+    else if(s<=6.9)r="Prediabetes";
+    else r="Diabetes";
+    document.getElementById("sugarResult").innerText=r;
+  }
+  function simulatePayment(){
+    document.getElementById("paymentStatus").innerText="✅ Payment simulated successfully. You can now chat with your dietician.";
+  }
+
+  // Chat Simulation
+  function sendMessage(){
+    const input=document.getElementById("chatInput");
+    const msg=input.value.trim();
+    if(!msg)return;
+    const chat=document.getElementById("chatMessages");
+    const client=document.createElement("div");
+    client.classList.add("chat-message","client");
+    client.textContent=msg;
+    chat.appendChild(client);
+    input.value="";
+    setTimeout(()=>{
+      const diet=new Message("Sure! Let's discuss your nutrition goals.").create();
+      chat.appendChild(diet);
+      chat.scrollTop=chat.scrollHeight;
+    },1000);
+    chat.scrollTop=chat.scrollHeight;
+  }
+  class Message{
+    constructor(text){this.text=text;}
+    create(){
+      const el=document.createElement("div");
+      el.classList.add("chat-message","dietician");
+      el.textContent=this.text;
+      return el;
+    }
+  }
 </script>
+
 </body>
 </html>

@@ -1,140 +1,169 @@
-<!-- Meal Intake Calculator Section (fully functional) -->
-<section id="meal-calculator" style="background:#fff;">
-  <h3 style="text-align:center;font-size:2em;color:#2e7d32;">
-    Meal Intake Calculator (74 Nutrients)
-  </h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NutriWise 74-Nutrient Calculator</title>
+<style>
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f8faf8;
+    color: #222;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    background: #2e8b57;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+  }
+  main {
+    padding: 1rem 2%;
+  }
+  .input-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  select, input {
+    padding: .6rem;
+    border: 1px solid #ccc;
+    border-radius: .4rem;
+    font-size: 1rem;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+  th, td {
+    border: 1px solid #e0e0e0;
+    padding: .4rem .6rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+  th {
+    background: #e9f5ec;
+    color: #256f45;
+    position: sticky;
+    top: 0;
+  }
+  td:first-child, th:first-child {
+    text-align: left;
+  }
+  tr:nth-child(even) { background: #fdfdfd; }
+  footer {
+    text-align: center;
+    font-size: .9rem;
+    color: #555;
+    padding: 1rem 0;
+    margin-top: 2rem;
+    border-top: 1px solid #ddd;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>NutriWise 74-Nutrient Calculator</h1>
+  <p>Per 1 g food basis • WHO/FAO RDA • Real-time Computation</p>
+</header>
 
-  <div class="controls" style="text-align:center;margin-top:15px;">
-    <label for="foodSelect">Food Item: </label>
-    <select id="foodSelect" style="padding:5px;border-radius:4px;">
-      <option value="">--Select Food--</option>
-      <option>Hausa Koko</option>
-      <option>Rice Porridge</option>
-      <option>Corn Porridge</option>
-      <option>Oblayo</option>
-    </select>
+<main>
+  <div class="input-box">
+    <label for="foodSelect"><strong>Select Food:</strong></label>
+    <select id="foodSelect"></select>
 
-    <label for="portion">Portion (g): </label>
-    <input type="number" id="portion" value="100" min="1"
-           style="width:80px;text-align:right;">
-    <button id="addBtn"
-            style="background:#2e7d32;color:white;border:none;
-                   padding:8px 12px;border-radius:5px;">
-      Add Food
-    </button>
-    <button id="resetBtn"
-            style="background:#a5d6a7;color:#1b5e20;border:none;
-                   padding:8px 12px;border-radius:5px;">
-      Reset
-    </button>
+    <label for="grams"><strong>Enter Quantity (g):</strong></label>
+    <input id="grams" type="number" min="0" step="0.1" placeholder="e.g. 120" />
   </div>
 
-  <div style="overflow-x:auto;margin-top:20px;">
-    <table id="nutrientTable"
-           style="width:100%;border-collapse:collapse;font-size:13px;">
+  <div class="table-container">
+    <table id="nutrientTable">
       <thead>
-        <tr style="background:#2e7d32;color:white;">
-          <th>Food Item</th><th>Portion (g)</th>
-          <th>Water (g)</th><th>Energy (kcal)</th>
-          <th>Protein (g)</th><th>Fat (g)</th>
-          <th>Carbohydrate (g)</th><th>Fibre (g)</th>
-          <th>Ash (g)</th><th>Calcium (mg)</th><th>Iron (mg)</th>
-          <th>Zinc (mg)</th><th>Vitamin A (µg)</th>
-          <th>Thiamine (mg)</th><th>Riboflavin (mg)</th>
-          <th>Niacin (mg)</th><th>Vitamin C (mg)</th>
-        </tr>
+        <tr id="nutrientHeader"></tr>
       </thead>
-      <tbody></tbody>
-      <tfoot>
-        <tr id="totalsRow"
-            style="background:#e8f5e9;font-weight:bold;">
-          <td colspan="2">Total</td>
-          <td colspan="15"></td>
-        </tr>
-      </tfoot>
+      <tbody id="nutrientBody"></tbody>
     </table>
   </div>
+</main>
 
-  <script>
-    /* ---- Example nutrient data per 100 g ---- */
-    const nutrientData = {
-      "Hausa Koko": {
-        "Water (g)":70,"Energy (kcal)":120,"Protein (g)":2.5,"Fat (g)":1.5,
-        "Carbohydrate (g)":25,"Fibre (g)":1.8,"Ash (g)":0.5,"Calcium (mg)":22,
-        "Iron (mg)":1.3,"Zinc (mg)":0.6,"Vitamin A (µg)":5,"Thiamine (mg)":0.03,
-        "Riboflavin (mg)":0.02,"Niacin (mg)":0.4,"Vitamin C (mg)":0
-      },
-      "Rice Porridge": {
-        "Water (g)":65,"Energy (kcal)":150,"Protein (g)":3,"Fat (g)":1,
-        "Carbohydrate (g)":30,"Fibre (g)":1.2,"Ash (g)":0.4,"Calcium (mg)":15,
-        "Iron (mg)":0.8,"Zinc (mg)":0.5,"Vitamin A (µg)":0,"Thiamine (mg)":0.04,
-        "Riboflavin (mg)":0.03,"Niacin (mg)":0.7,"Vitamin C (mg)":0
-      },
-      "Corn Porridge": {
-        "Water (g)":60,"Energy (kcal)":180,"Protein (g)":4,"Fat (g)":2,
-        "Carbohydrate (g)":34,"Fibre (g)":2.5,"Ash (g)":0.6,"Calcium (mg)":20,
-        "Iron (mg)":1.1,"Zinc (mg)":0.7,"Vitamin A (µg)":3,"Thiamine (mg)":0.05,
-        "Riboflavin (mg)":0.04,"Niacin (mg)":0.9,"Vitamin C (mg)":0
-      },
-      "Oblayo": {
-        "Water (g)":68,"Energy (kcal)":110,"Protein (g)":2.1,"Fat (g)":0.8,
-        "Carbohydrate (g)":23,"Fibre (g)":1.7,"Ash (g)":0.4,"Calcium (mg)":18,
-        "Iron (mg)":0.9,"Zinc (mg)":0.4,"Vitamin A (µg)":2,"Thiamine (mg)":0.02,
-        "Riboflavin (mg)":0.02,"Niacin (mg)":0.3,"Vitamin C (mg)":0
-      }
-    };
+<footer>
+  © 2025 NutriWise – Eat Smart, Live Healthy
+</footer>
+<script>
+// === SAMPLE DATA extracted & rounded (replace or extend with full 68-nutrient set) ===
+const foodData = {
+  "Hausa koko": {
+    "Water (g)": 0.14, "kcal": 1.22, "Protein (g)": 0.02, "Total fat (g)": 0.01,
+    "Carbohydrates (g)": 0.25, "Iron (mg)": 0.01, "Calcium (mg)": 0.08
+  },
+  "Rice porridge": {
+    "Water (g)": 0.72, "kcal": 0.98, "Protein (g)": 0.03, "Total fat (g)": 0.01,
+    "Carbohydrates (g)": 0.22, "Iron (mg)": 0.02, "Calcium (mg)": 0.05
+  },
+  "Cornflakes": {
+    "Water (g)": 0.03, "kcal": 3.80, "Protein (g)": 0.08, "Total fat (g)": 0.01,
+    "Carbohydrates (g)": 0.84, "Iron (mg)": 0.10, "Calcium (mg)": 0.07
+  }
+  // … embed all remaining foods from your Excel here …
+};
 
-    const tableBody = document.querySelector("#nutrientTable tbody");
-    const totalsRow = document.getElementById("totalsRow");
+// === WHO/FAO adult RDA reference (approximate) ===
+const RDA = {
+  "Water (g)": 2700, "kcal": 2000, "Protein (g)": 50,
+  "Total fat (g)": 70, "Carbohydrates (g)": 310,
+  "Iron (mg)": 18, "Calcium (mg)": 1000
+  // … add other nutrients as needed …
+};
 
-    document.getElementById("addBtn").addEventListener("click", addFood);
-    document.getElementById("resetBtn").addEventListener("click", resetTable);
+// Helper: generate header columns dynamically
+const nutrientList = Object.keys(Object.values(foodData)[0]);
+const headerRow = document.getElementById("nutrientHeader");
+headerRow.innerHTML = "<th>Nutrient</th><th>Intake (g/kcal)</th><th>% RDA</th>";
+</script>
+<script>
+const foodSelect = document.getElementById("foodSelect");
+const gramsInput = document.getElementById("grams");
+const body = document.getElementById("nutrientBody");
 
-    function addFood() {
-      const food = document.getElementById("foodSelect").value;
-      const portion = parseFloat(document.getElementById("portion").value);
-      if (!food || !portion || !nutrientData[food]) {
-        alert("Please select a valid food and portion size.");
-        return;
-      }
-      const nutrients = nutrientData[food];
-      const tr = document.createElement("tr");
-      tr.innerHTML =
-        `<td>${food}</td><td>${portion}</td>` +
-        Object.keys(nutrients)
-          .map(k => `<td>${((nutrients[k] * portion) / 100).toFixed(2)}</td>`)
-          .join("");
-      tableBody.appendChild(tr);
-      updateTotals();
-    }
+// populate dropdown
+Object.keys(foodData).forEach(f => {
+  const opt = document.createElement("option");
+  opt.value = f; opt.textContent = f;
+  foodSelect.appendChild(opt);
+});
 
-    function updateTotals() {
-      const rows = tableBody.querySelectorAll("tr");
-      if (rows.length === 0) {
-        totalsRow.innerHTML = "<td colspan='2'>Total</td><td colspan='15'></td>";
-        return;
-      }
+function updateTable() {
+  const food = foodSelect.value;
+  const grams = parseFloat(gramsInput.value) || 0;
+  const nutrients = foodData[food];
+  body.innerHTML = "";
 
-      const keys = Object.keys(Object.values(nutrientData)[0]);
-      const totals = Array(keys.length).fill(0);
+  for (let n in nutrients) {
+    const valPerGram = nutrients[n];
+    const intake = valPerGram * grams;              // intake amount
+    const rda = RDA[n] || 0;
+    const pct = rda ? (intake / rda) * 100 : 0;
 
-      rows.forEach(row => {
-        const tds = row.querySelectorAll("td");
-        for (let i = 2; i < tds.length; i++) {
-          totals[i - 2] += parseFloat(tds[i].textContent) || 0;
-        }
-      });
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${n}</td>
+      <td>${intake.toFixed(2)}</td>
+      <td>${pct.toFixed(2)}%</td>`;
+    body.appendChild(row);
+  }
+}
 
-      totalsRow.innerHTML =
-        "<td colspan='2'>Total</td>" +
-        totals.map(v => `<td>${v.toFixed(2)}</td>`).join("");
-    }
+foodSelect.addEventListener("change", updateTable);
+gramsInput.addEventListener("input", updateTable);
 
-    function resetTable() {
-      tableBody.innerHTML = "";
-      updateTotals();
-    }
-
-    updateTotals(); // initialise totals row
-  </script>
-</section>
+// initialise
+foodSelect.selectedIndex = 0;
+updateTable();
+</script>
+</body>
+</html>
